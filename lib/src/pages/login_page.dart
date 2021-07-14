@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:forms/src/bloc/provider.dart';
 
 class LoginPage extends StatelessWidget {
   const LoginPage({Key key}) : super(key: key);
@@ -64,6 +65,7 @@ class LoginPage extends StatelessWidget {
   }
 
   Widget _loginF(BuildContext context) {
+    final bloc = Provider.of(context);
     final size = MediaQuery.of(context).size;
 
     return SingleChildScrollView(
@@ -94,9 +96,9 @@ class LoginPage extends StatelessWidget {
                       fontSize: 20.0,
                     )),
                 SizedBox(height: 60.0),
-                _email(),
+                _email(bloc),
                 SizedBox(height: 60.0),
-                _password(),
+                _password(bloc),
                 SizedBox(height: 60.0),
                 ingresar(),
               ],
@@ -111,35 +113,49 @@ class LoginPage extends StatelessWidget {
     );
   }
 
-  Widget _email() {
-    return Container(
-      padding: EdgeInsets.symmetric(horizontal: 20.0),
-      child: TextField(
-        keyboardType: TextInputType.emailAddress,
-        decoration: InputDecoration(
-            icon: Icon(
-              Icons.alternate_email,
-              color: Colors.deepPurple,
+  Widget _email(LoginBloc bloc) {
+    return StreamBuilder(
+        stream: bloc.emailStream,
+        builder: (BuildContext context, AsyncSnapshot snapshot) {
+          return Container(
+            padding: EdgeInsets.symmetric(horizontal: 20.0),
+            child: TextField(
+              keyboardType: TextInputType.emailAddress,
+              decoration: InputDecoration(
+                  icon: Icon(
+                    Icons.alternate_email,
+                    color: Colors.deepPurple,
+                  ),
+                  hintText: 'ejemplo@correo.com',
+                  labelText: 'Correo',
+                  counterText: snapshot.data,
+                  errorText: snapshot.error),
+              onChanged: bloc.changeEmail,
             ),
-            hintText: 'ejemplo@correo.com',
-            labelText: 'Correo'),
-      ),
-    );
+          );
+        });
   }
 
-  Widget _password() {
-    return Container(
-      padding: EdgeInsets.symmetric(horizontal: 20.0),
-      child: TextField(
-        obscureText: true,
-        decoration: InputDecoration(
-            icon: Icon(
-              Icons.lock_outlined,
-              color: Colors.deepPurple,
+  Widget _password(LoginBloc bloc) {
+    return StreamBuilder(
+        stream: bloc.passwordStream,
+        builder: (BuildContext context, AsyncSnapshot snapshot) {
+          return Container(
+            padding: EdgeInsets.symmetric(horizontal: 20.0),
+            child: TextField(
+              obscureText: true,
+              decoration: InputDecoration(
+                  icon: Icon(
+                    Icons.lock_outlined,
+                    color: Colors.deepPurple,
+                  ),
+                  labelText: 'Contraseña',
+                  counterText: snapshot.data,
+                  errorText: snapshot.error),
+              onChanged: bloc.changePassword,
             ),
-            labelText: 'Contraseña'),
-      ),
-    );
+          );
+        });
   }
 
   Widget ingresar() {
